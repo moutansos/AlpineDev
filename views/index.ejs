@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title><%= title %></title>
+    <script src="/dist/bundle.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="icon" href="/dist/img/ico.png" type="image/png"/>
+    <style ="text/css">
+      .card-wide.mdl-card {
+        width: 512px;
+      }
+      .card-wide > .mdl-card__title {
+        color: #fff;
+        height: 176px;
+      }
+      .card-wide > .mdl-card__menu {
+        color: #fff;
+      }
+
+      .card-square.mdl-card {
+        width: 320px;
+      }
+      .card-square > .mdl-card__title {
+        color: #fff;
+        height: 176px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Always shows a header, even in smaller screens. -->
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+          <!-- Title -->
+          <span class="mdl-layout-title"><%= title %></span>
+          <!-- Add spacer, to align navigation to the right -->
+          <div class="mdl-layout-spacer"></div>
+          <!-- Navigation. We hide it in small screens. -->
+          <nav class="mdl-navigation mdl-layout--large-screen-only">
+            <a class="mdl-navigation__link" href=""></a>
+            <a class="mdl-navigation__link" href=""></a>
+            <a class="mdl-navigation__link" href="">Link</a>
+            <a class="mdl-navigation__link" href="">Link</a>
+          </nav>
+        </div>
+      </header>
+      <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">Navigation</span>
+        <nav class="mdl-navigation">
+          <a class="mdl-navigation__link" href="#" id="nav-home-1"><i class="material-icons">home</i> Home</a>
+          <a class="mdl-navigation__link" href="#" id="nav-dev-1"><i class="material-icons">developer_mode</i> Dev Projects</a>
+          <a class="mdl-navigation__link" href="">Link</a>
+          <a class="mdl-navigation__link" href="">Link</a>
+        </nav>
+      </div>
+      <main class="mdl-layout__content">
+        <div class="page-content" id="main-view">
+          <!-- Your content goes here -->
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
