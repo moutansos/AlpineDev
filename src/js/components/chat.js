@@ -15,15 +15,14 @@ const template = `<!-- Wide card with share menu button -->
 </style>
 <div class="mdl-cell">
     <form action="#">
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="sample3">
-        <label class="mdl-textfield__label" for="sample3">Text...</label>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="<%= containerId %>">
+        <input class="mdl-textfield__input" type="text" id="<%= inputId %>">
+        <label class="mdl-textfield__label" for="<%= inputId %>">Chat Message</label>
       </div>
-    </form>
     </form>
     <!-- Accent-colored raised button with ripple -->
     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="<%= sendId %>">
-    Send
+      Send
     </button>
 </div>`;
 
@@ -37,8 +36,8 @@ class Chat {
     this.uid = uid.genUid();
     this.sendButtonId = "chat-" + this.uid + "-send-button";
     this.inputId = "chat-" + this.uid + "-input";
+    this.containerId = "chat-" + this.uid + "-input-container";
     this.columns = columnSize;
-
     this.isGridCell = false;
   }
 
@@ -46,7 +45,8 @@ class Chat {
      var dataIn = {
         uid: this.uid,
         sendId: this.sendButtonId,
-        inputId: this.inputId
+        inputId: this.inputId,
+        containerId: this.containerId
     }
 
     return ejs.render(template, dataIn);
@@ -81,6 +81,13 @@ class Chat {
       var button = document.getElementById(this.sendButtonId);
       button.onclick = callback;
     }
+  }
+
+  configJs() {
+    var button = document.getElementById(this.sendButtonId);
+    var input = document.getElementById(this.containerId);
+    componentHandler.upgradeElement(button);
+    componentHandler.upgradeElement(input);
   }
 }
 

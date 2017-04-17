@@ -79,6 +79,20 @@ class Grid {
     var el = document.getElementById(this.imageId);
     el.style.backgroundImage = 'url(' + this.image + ')';
   }
+
+  configJs()
+  {
+    var ara = this.gridAra;
+    for(var i = 0; i < ara.length; i++) {
+      for(var x = 0; x < ara[i].length; x++) {
+        var component = ara[i][x];
+        if(component != null)
+        {
+          component.configJs();
+        }
+      }
+    }
+  }
 }
 
 //Public API

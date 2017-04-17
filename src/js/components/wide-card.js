@@ -143,6 +143,10 @@ class WideCard {
       button.onclick = callback;
     }
   }
+
+  configJs() {
+    //PASS
+  }
 }
 
 //Public API

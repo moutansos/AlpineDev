@@ -130,6 +130,10 @@ class SquareCard {
       button.onclick = callback;
     }
   }
+
+  configJs() {
+    //PASS
+  }
 }
 
 //Public API

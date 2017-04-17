@@ -38,6 +38,10 @@ class View {
     setBaseComponent(newComponent) {
         this.baseComponent = newComponent;
         this.updateContent(this.render());
+        if(this.baseComponent != null)
+        {
+            this.baseComponent.configJs();
+        }
     }
 }
 
