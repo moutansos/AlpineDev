@@ -1,5 +1,5 @@
 require('../css/material.min.css');
-require('../../node_modules/material-design-lite/material.min.js');
+require('./material.min.js');
 require('../../node_modules/ejs/ejs.min.js');
 const socket = require("socket.io-client")();
 const WideCard = require('./components/wide-card.js');
