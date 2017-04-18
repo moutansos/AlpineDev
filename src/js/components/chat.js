@@ -12,19 +12,34 @@ const columnSize = 6;
  */
 const template = `<!-- Wide card with share menu button -->
 <style type="text/css">
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #2d2d2d;
+  overflow: auto;
+  padding: 10px;
+}
+
+#<%= inputId %> {
+  color: red;
+}
 </style>
 <div class="mdl-cell">
-    <form action="#">
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="<%= containerId %>">
-        <input class="mdl-textfield__input" type="text" id="<%= inputId %>">
-        <label class="mdl-textfield__label" for="<%= inputId %>">Chat Message</label>
-      </div>
-    </form>
-    <!-- Accent-colored raised button with ripple -->
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="<%= sendId %>">
+
+</div>
+
+<footer>
+  <div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--10-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="<%= containerId %>">
+      <input class="mdl-textfield__input" type="text" id="<%= inputId %>">
+      <label class="mdl-textfield__label" id="<%= labelId %>" for="<%= inputId %>">Chat Message</label>
+    </div>
+    <button class="mdl-cell mdl-cell--2-col mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="<%= sendId %>">
       Send
     </button>
-</div>`;
+  </div>
+</footer>`;
 
 const globalStyle = ``
 
@@ -37,6 +52,7 @@ class Chat {
     this.sendButtonId = "chat-" + this.uid + "-send-button";
     this.inputId = "chat-" + this.uid + "-input";
     this.containerId = "chat-" + this.uid + "-input-container";
+    this.labelId = "chat-" + this.uid + "-label-id";
     this.columns = columnSize;
     this.isGridCell = false;
   }
@@ -46,7 +62,8 @@ class Chat {
         uid: this.uid,
         sendId: this.sendButtonId,
         inputId: this.inputId,
-        containerId: this.containerId
+        containerId: this.containerId,
+        labelId: this.labelId,
     }
 
     return ejs.render(template, dataIn);
