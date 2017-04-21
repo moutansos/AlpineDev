@@ -22,7 +22,7 @@ footer {
 }
 
 #<%= inputId %> {
-  color: red;
+  color: #c6c6c6;
 }
 </style>
 <div class="mdl-cell">
