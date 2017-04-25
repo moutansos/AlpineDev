@@ -7,8 +7,11 @@ const SquareCard = require('./components/square-card.js');
 const Grid = require('./components/grid.js');
 const Chat = require('./components/chat.js');
 const View = require('./view.js');
+const StorageArray = require('./storage-array.js');
 
 console.log('Initializing AlpineDev Shell...');
+
+var msgCache = new StorageArray('ad-msg-cache');
 
 // Home Grid
 var navHome = function() {
