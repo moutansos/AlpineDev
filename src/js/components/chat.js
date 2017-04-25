@@ -16,13 +16,20 @@ footer {
   position: fixed;
   bottom: 0;
   width: 100%;
+  height: 70px;
   background-color: #2d2d2d;
   overflow: auto;
-  padding: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 #<%= inputId %> {
   color: #c6c6c6;
+  border-bottom-color: #cecece;
+}
+
+#<%= labelId %> {
+  color: #cecece;
 }
 </style>
 <div class="mdl-cell">
@@ -89,8 +96,16 @@ class Chat {
   }
 
   getInputText() {
-      var input = document.getElementById(this.inputId);
-      return input.value;
+    var input = document.getElementById(this.inputId);
+    return input.value;
+  }
+
+  setInputText(newText)
+  {
+    var input = document.getElementById(this.inputId);
+    var container = document.getElementById(this.containerId);
+    container.classList.remove('is-dirty');
+    input.value = newText;
   }
 
   setSendButtonListener(callback) {
@@ -105,6 +120,13 @@ class Chat {
     var input = document.getElementById(this.containerId);
     componentHandler.upgradeElement(button);
     componentHandler.upgradeElement(input);
+
+    input.addEventListener("keyup", function(event) {
+      event.preventDefault();
+      if(event.keyCode == 13) { //The Enter Key
+        button.click();
+      }
+    });
   }
 }
 

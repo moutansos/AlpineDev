@@ -19,7 +19,7 @@ var navHome = function() {
     mainView.setBaseComponent(homeGrid);
 
     homeDevProjCard.setButtonListener(navDevProjects);
-    socket.emit('chat-message', 'User Navigated Home');
+    socket.emit('chat-message', {name: 'Client', msg: 'User Navigated Home'});
 }
 
 //Development Projects Grid
@@ -46,7 +46,7 @@ var navDevProjects = function() {
     devMinemanCard.setButtonListener(function() {
         window.open('https://github.com/moutansos/mineman');
     });
-    socket.emit('chat-message', 'User Navigated To Dev');
+    socket.emit('chat-message', {name: 'Client', msg: 'User Navigated To Dev'});
 }
 
 var navChat = function() {
@@ -54,10 +54,11 @@ var navChat = function() {
 
     mainView.setBaseComponent(chat);
     
-    socket.emit('chat-message', 'User Navigated to Chat');
+    socket.emit('chat-message', {name: 'Client', msg: 'User Navigated to Chat'});
 
     chat.setSendButtonListener(function(){
-        socket.emit('chat-message', chat.getInputText());
+        socket.emit('chat-message', {name: 'moutansos', msg: chat.getInputText()});
+        chat.setInputText(null);
     });
 }
 
