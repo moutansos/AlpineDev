@@ -31,10 +31,14 @@ footer {
 #<%= labelId %> {
   color: #cecece;
 }
-</style>
-<div class="mdl-cell">
 
-</div>
+#<%= msgContainerId %> {
+  width: 650px;
+}
+</style>
+<ul class="mdl-list" id ="<%= msgContainerId %>">
+
+</ul>
 
 <footer>
   <div class="mdl-grid">
@@ -59,6 +63,7 @@ class Chat {
     this.sendButtonId = "chat-" + this.uid + "-send-button";
     this.inputId = "chat-" + this.uid + "-input";
     this.containerId = "chat-" + this.uid + "-input-container";
+    this.msgContainerId = "chat-" + this.uid + "-msg-container";
     this.labelId = "chat-" + this.uid + "-label-id";
     this.columns = columnSize;
     this.isGridCell = false;
@@ -71,6 +76,7 @@ class Chat {
         inputId: this.inputId,
         containerId: this.containerId,
         labelId: this.labelId,
+        msgContainerId: this.msgContainerId
     }
 
     return ejs.render(template, dataIn);
@@ -114,6 +120,52 @@ class Chat {
       button.onclick = callback;
     }
   }
+
+  /**
+   * Generates a new message element
+   * @param {*} msg 
+   */
+  addMessage(msg) {
+    //TODO: Figure out formatting errors
+    var name = msg.name;
+    var message = msg.msg;
+
+    var list = document.getElementById(this.msgContainerId);
+
+    var newMsg = document.createElement("li");
+    newMsg.classList.add('mdl-list__item', 'mdl-list__item--three-line');
+
+    var icon = document.createElement('i');
+    icon.classList.add('material-icons', 'mdl-list_item-avatar');
+    icon.appendChild(document.createTextNode('person'));
+
+    var nameSpan = document.createElement("span");
+    nameSpan.appendChild(document.createTextNode(name));
+
+    var textBodySpan = document.createElement('span');
+    textBodySpan.classList.add('mdl-list__item-text-body');
+    textBodySpan.appendChild(document.createTextNode(message));
+
+    var contentSpan = document.createElement("span");
+    contentSpan.appendChild(icon);
+    contentSpan.appendChild(nameSpan);
+    contentSpan.appendChild(textBodySpan);
+
+    newMsg.appendChild(contentSpan);
+    list.appendChild(newMsg);
+  }
+  /*
+    <li class="mdl-list__item mdl-list__item--three-line">
+      <span class="mdl-list__item-primary-content">
+        <i class="material-icons mdl-list__item-avatar">person</i>
+        <span>Bryan Cranston</span>
+        <span class="mdl-list__item-text-body">
+          Bryan Cranston played the role of Walter in Breaking Bad. He is also known
+          for playing Hal in Malcom in the Middle.
+        </span>
+      </span>
+    </li>
+  */
 
   configJs() {
     var button = document.getElementById(this.sendButtonId);

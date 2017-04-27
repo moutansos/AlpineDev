@@ -12,6 +12,7 @@ const StorageArray = require('./storage-array.js');
 console.log('Initializing AlpineDev Shell...');
 
 var msgCache = new StorageArray('ad-msg-cache');
+console.log(msgCache.getItems());
 
 // Home Grid
 var navHome = function() {
@@ -59,10 +60,22 @@ var navChat = function() {
     
     socket.emit('chat-message', {name: 'Client', msg: 'User Navigated to Chat'});
 
-    chat.setSendButtonListener(function(){
+    /*chat.setSendButtonListener(function(){
         socket.emit('chat-message', {name: 'moutansos', msg: chat.getInputText()});
         chat.setInputText(null);
+    });*/
+
+    chat.setSendButtonListener(function(){
+        var msg = {name: 'Test', msg: chat.getInputText()}
+        chat.addMessage(msg);
+        console.log(msg);
+        chat.setInputText(null);
     });
+
+    var messages = msgCache.getItems();
+    for(var i = 0; i < messages.length; i++){
+        chat.addMessage(messages[i]);
+    }
 }
 
 //Setup the main view

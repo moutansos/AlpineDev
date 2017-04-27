@@ -20,7 +20,7 @@ const globalStyle = ``
 class Grid {
   /**
    * Class for rendering a card component on the screen
-   * @param {Component[][]} imageUrl 
+   * @param {Component[][]} imageUrl
    */
   constructor(gridArray) {
     this.uid = uid.genUid();
