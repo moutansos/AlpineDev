@@ -34,6 +34,7 @@ footer {
 
 #<%= msgContainerId %> {
   width: 650px;
+  padding-bottom: 70px;   /* Height of the footer */
 }
 </style>
 <ul class="mdl-list" id ="<%= msgContainerId %>">
@@ -126,7 +127,6 @@ class Chat {
    * @param {*} msg 
    */
   addMessage(msg) {
-    //TODO: Figure out formatting errors
     var name = msg.name;
     var message = msg.msg;
 
@@ -136,7 +136,7 @@ class Chat {
     newMsg.classList.add('mdl-list__item', 'mdl-list__item--three-line');
 
     var icon = document.createElement('i');
-    icon.classList.add('material-icons', 'mdl-list_item-avatar');
+    icon.classList.add('material-icons', 'mdl-list__item-avatar');
     icon.appendChild(document.createTextNode('person'));
 
     var nameSpan = document.createElement("span");
@@ -147,12 +147,17 @@ class Chat {
     textBodySpan.appendChild(document.createTextNode(message));
 
     var contentSpan = document.createElement("span");
+    contentSpan.classList.add('mdl-list__item-primary-content');
     contentSpan.appendChild(icon);
     contentSpan.appendChild(nameSpan);
     contentSpan.appendChild(textBodySpan);
 
     newMsg.appendChild(contentSpan);
+    componentHandler.upgradeElement(newMsg);
     list.appendChild(newMsg);
+    
+    //TODO: Get scrolling to work in the right place
+    window.scrollTo(0, document.body.scrollHeight);
   }
   /*
     <li class="mdl-list__item mdl-list__item--three-line">
@@ -170,8 +175,10 @@ class Chat {
   configJs() {
     var button = document.getElementById(this.sendButtonId);
     var input = document.getElementById(this.containerId);
+    var list = document.getElementById(this.msgContainerId);
     componentHandler.upgradeElement(button);
     componentHandler.upgradeElement(input);
+    componentHandler.upgradeElement(list);
 
     input.addEventListener("keyup", function(event) {
       event.preventDefault();
