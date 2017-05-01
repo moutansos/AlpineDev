@@ -67,6 +67,7 @@ var navChat = function() {
 
     chat.setSendButtonListener(function(){
         var msg = {name: 'Test', msg: chat.getInputText()}
+        socket.emit('chat-message', msg);
         chat.addMessage(msg);
         console.log(msg);
         chat.setInputText(null);
@@ -76,6 +77,10 @@ var navChat = function() {
     for(var i = 0; i < messages.length; i++){
         chat.addMessage(messages[i]);
     }
+
+    socket.on('chat-message', function(msg) {
+        chat.addMessage(msg);
+    });
 }
 
 //Setup the main view

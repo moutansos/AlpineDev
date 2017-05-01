@@ -59,6 +59,7 @@ if (cluster.isMaster) {
         console.log('a user connected');
         socket.on('chat-message', function(data){
             console.log(data.name + ': ' + data.msg);
+            socket.broadcast.emit('chat-message', data);
         });
         socket.on('disconnect', function(){
             console.log('user disconnected');

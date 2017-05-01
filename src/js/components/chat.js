@@ -13,7 +13,7 @@ const columnSize = 6;
 const template = `<!-- Wide card with share menu button -->
 <style type="text/css">
 footer {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   width: 100%;
   height: 70px;
@@ -157,7 +157,7 @@ class Chat {
     list.appendChild(newMsg);
     
     //TODO: Get scrolling to work in the right place
-    window.scrollTo(0, document.body.scrollHeight);
+    newMsg.scrollIntoView();
   }
   /*
     <li class="mdl-list__item mdl-list__item--three-line">
