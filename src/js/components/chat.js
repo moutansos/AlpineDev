@@ -13,14 +13,15 @@ const columnSize = 6;
 const template = `<!-- Wide card with share menu button -->
 <style type="text/css">
 footer {
-  position: absolute;
+  position: relative;
   bottom: 0;
   width: 100%;
-  height: 70px;
+  height: 80px;
   background-color: #2d2d2d;
   overflow: auto;
   padding-left: 10px;
   padding-right: 10px;
+  padding-bottom = 0;
 }
 
 #<%= inputId %> {
@@ -33,8 +34,10 @@ footer {
 }
 
 #<%= msgContainerId %> {
+  margin-top: 0px;
+  margin-bottom: 0px;
   width: 650px;
-  padding-bottom: 70px;   /* Height of the footer */
+  /*min-height: 500px;*/
 }
 </style>
 <ul class="mdl-list" id ="<%= msgContainerId %>">
@@ -172,6 +175,12 @@ class Chat {
     </li>
   */
 
+  formatChatBox() {
+    var header = document.getElementById('main-header');
+    var list = document.getElementById(this.msgContainerId);
+    list.style.minHeight = (window.innerHeight - (96 + header.clientHeight)) + "px"; //114
+  }
+
   configJs() {
     var button = document.getElementById(this.sendButtonId);
     var input = document.getElementById(this.containerId);
@@ -180,6 +189,10 @@ class Chat {
     componentHandler.upgradeElement(input);
     componentHandler.upgradeElement(list);
 
+    this.formatChatBox(list);
+    window.onresize = (function() {
+      this.formatChatBox();
+    }).bind(this);
     input.addEventListener("keyup", function(event) {
       event.preventDefault();
       if(event.keyCode == 13) { //The Enter Key
