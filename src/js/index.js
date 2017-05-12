@@ -6,6 +6,7 @@ const WideCard = require('./components/wide-card.js');
 const SquareCard = require('./components/square-card.js');
 const Grid = require('./components/grid.js');
 const Chat = require('./components/chat.js');
+const LoginPrompt = require('./components/LoginPrompt.js');
 const View = require('./view.js');
 const StorageArray = require('./storage-array.js');
 
@@ -24,6 +25,17 @@ var navHome = function() {
 
     homeDevProjCard.setButtonListener(navDevProjects);
     socket.emit('chat-message', {name: 'Client', msg: 'User Navigated Home'});
+}
+
+//Login Layout
+var navLogin = function() {
+    var prompt = new LoginPrompt();
+    mainView.setBaseComponent(prompt);
+
+    prompt.setLoginButtonListener(function() {
+        console.log('Username: ' + prompt.getUsernameFromInput());
+        console.log('Password: ' + prompt.getPasswordFromInput());
+    });
 }
 
 //Development Projects Grid
@@ -53,6 +65,7 @@ var navDevProjects = function() {
     socket.emit('chat-message', {name: 'Client', msg: 'User Navigated To Dev'});
 }
 
+//Chat Compoenet
 var navChat = function() {
     var chat = new Chat();
 
@@ -96,8 +109,10 @@ window.onload = function() {
     var navHomeEl = document.getElementById('nav-home-1');
     var navDevProjectsEl = document.getElementById('nav-dev-1');
     var navChatEl = document.getElementById('nav-chat-1');
+    var navLoginEl = document.getElementById('nav-login-1');
 
     navHomeEl.onclick = navHome;
     navDevProjectsEl.onclick = navDevProjects;
     navChatEl.onclick = navChat;
+    navLoginEl.onclick = navLogin;
 }

@@ -64,6 +64,29 @@ if (cluster.isMaster) {
         socket.on('disconnect', function(){
             console.log('user disconnected');
         });
+
+        socket.on('login-user', function(data) {
+            var authToken = {
+                authorized: true,
+                token: "AUTHORIZED TOKEN",
+            };
+            var loginError = {
+                authorized: false,
+                errorMsg: "Invalid username or password",
+            };
+            var username = data.username;
+            var pass_attempt = data.pass_attempt;
+
+            if(username == 'moutansos' &&
+               pass_attempt == '1234') //TODO: replace with a real authentication check
+            {
+                socket.emit('login-response', authToken);
+            }
+            else
+            {
+                socket.emit('login-response', loginError);
+            }
+        });
     });
 
     var port = process.env.PORT || 3000;
