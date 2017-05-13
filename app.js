@@ -69,10 +69,11 @@ if (cluster.isMaster) {
             var authToken = {
                 authorized: true,
                 token: "AUTHORIZED TOKEN",
+                msg: "Login Sucessful",
             };
             var loginError = {
                 authorized: false,
-                errorMsg: "Invalid username or password",
+                msg: "Invalid username or password",
             };
             var username = data.username;
             var pass_attempt = data.pass_attempt;

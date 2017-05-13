@@ -33,8 +33,14 @@ var navLogin = function() {
     mainView.setBaseComponent(prompt);
 
     prompt.setLoginButtonListener(function() {
-        console.log('Username: ' + prompt.getUsernameFromInput());
-        console.log('Password: ' + prompt.getPasswordFromInput());
+        socket.emit('login-user', {
+            username: prompt.getUsernameFromInput(),
+            pass_attempt: prompt.getPasswordFromInput(),
+        });
+    });
+
+    socket.on('login-response', function(data) {
+        prompt.setResponseText(data.msg);
     });
 }
 

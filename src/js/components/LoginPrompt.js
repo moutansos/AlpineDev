@@ -3,20 +3,25 @@ const uid = require('../uid.js');
 
 const template = `<!-- Login Prompt -->
 <style type="text/css">
-  .login-layout {
+  .<%= loginLayoutClass %> {
     align-items: center;
     justify-content: center;
   }
-  .mdl-layout__content {
+  .<%= loginContentClass %> {
     padding: 24px;
     flex: none;
+    align-items: center;
+    justify-content: center;
+  }
+  #<%= responseId %> {
+    color: red;
   }
 </style>
-<div class="mdl-layout mdl-js-layout mdl-color--grey-100 <%= loginLayoutClass %>">
+<div class="mdl-layout mdl-js-layout <%= loginLayoutClass %>">
 	<main class="mdl-layout__content <%= loginContentClass %>">
-    <div class="login-prompt mdl-cell mdl-card mdl-shadow--2dp card-square-<%= uid %>">
-      <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
-        <h2 class="mdl-card__title-text">AlpineDev Login</h2>
+    <div class="login-prompt mdl-card mdl-shadow--2dp card-square-<%= uid %>">
+      <div class="mdl-card__title mdl-color--primary mdl-color-text">
+        <h2 class="mdl-card__title-text" style="color: rgb(66,66,66);">AlpineDev Login</h2>
       </div>
       <div class="mdl-card__supporting-text">
         <form action="#">
@@ -29,6 +34,7 @@ const template = `<!-- Login Prompt -->
             <label class="mdl-textfield__label" for="<%= passInputId %>">Password</label>
           </div>
         </form>
+        <a id="<%= responseId %>"></a>
       </div>
       <div class="mdl-card__actions mdl-card--border">
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="<%= loginButtonId %>">
@@ -52,6 +58,7 @@ class LoginPrompt {
     this.passInputId = 'login-prompt-' + this.uid + '-pass-input';
     this.usernameInputContainer = 'login-prompt-' + this.uid + '-username-input-container';
     this.usernameInputId = 'login-prompt-' + this.uid + '-username-input';
+    this.responseId = 'login-prompt-' + this.uid + '-response';
     
     //CSS Classes
     this.loginLayoutClass = 'login-prompt-' + this.uid + '-layout';
@@ -68,6 +75,7 @@ class LoginPrompt {
         usernameInputId: this.usernameInputId,
         loginLayoutClass: this.loginContentClass,
         loginContentClass: this.loginContentClass,
+        responseId: this.responseId,
     }
 
     return ejs.render(template, dataIn);
@@ -84,16 +92,19 @@ class LoginPrompt {
     }
   }
 
-  getUsernameFromInput()
-  {
+  getUsernameFromInput() {
     var input = document.getElementById(this.usernameInputId);
     return input.value;
   }
 
-  getPasswordFromInput()
-  {
+  getPasswordFromInput() {
     var pass = document.getElementById(this.passInputId);
     return pass.value;
+  }
+
+  setResponseText(text) {
+    var response = document.getElementById(this.responseId);
+    response.innerText = text;
   }
 
   configJs() {
