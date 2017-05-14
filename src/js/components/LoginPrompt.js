@@ -1,6 +1,8 @@
 require('../../../node_modules/ejs/ejs.min.js');
 const uid = require('../uid.js');
 
+const idPrefix = 'login-prompt-';
+
 const template = `<!-- Login Prompt -->
 <style type="text/css">
   .<%= loginLayoutClass %> {
@@ -25,6 +27,8 @@ const template = `<!-- Login Prompt -->
       </div>
       <div class="mdl-card__supporting-text">
         <form action="#">
+          <div id="<%= signupFieldContainer %>">
+          </div>
           <div class="mdl-textfield mdl-js-textfield" id="<%= usernameInputContainer %>">
             <input class="mdl-textfield__input" type="text" id="<%= usernameInputId %>" />
             <label class="mdl-textfield__label" for="<%= usernameInputId %>">Username</label>
@@ -40,6 +44,9 @@ const template = `<!-- Login Prompt -->
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="<%= loginButtonId %>">
           Login
         </a>
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="<%= signupButtonId %>">
+          Signup
+        </a>
       </div>
     </div>
   </main>
@@ -53,16 +60,25 @@ class LoginPrompt {
    */
   constructor() {
     this.uid = uid.genUid();
-    this.loginButtonId = 'login-prompt-' + this.uid + '-login-button';
-    this.passInputContainer = 'login-prompt-' + this.uid + '-pass-input-container';
-    this.passInputId = 'login-prompt-' + this.uid + '-pass-input';
-    this.usernameInputContainer = 'login-prompt-' + this.uid + '-username-input-container';
-    this.usernameInputId = 'login-prompt-' + this.uid + '-username-input';
-    this.responseId = 'login-prompt-' + this.uid + '-response';
+    this.loginButtonId = idPrefix + this.uid + '-login-button';
+    this.signupButtonId = idPrefix + this.uid + '-signup-button';
+    this.passInputContainer = idPrefix + this.uid + '-pass-input-container';
+    this.passInputId = idPrefix + this.uid + '-pass-input';
+    this.usernameInputContainer = idPrefix + this.uid + '-username-input-container';
+    this.usernameInputId = idPrefix + this.uid + '-username-input';
+    this.nameInputContainer = idPrefix + this.uid + '-name-input-container';
+    this.nameInputId = idPrefix + this.uid + '-name-input'
+    this.emailInputContainer = idPrefix + this.uid + '-email-input-container';
+    this.emailInputId = idPrefix + this.uid + '-email-input';
+    this.responseId = idPrefix + this.uid + '-response';
+    this.signupFieldContainer = idPrefix + this.uid + '-signup-field-container';
     
     //CSS Classes
     this.loginLayoutClass = 'login-prompt-' + this.uid + '-layout';
     this.loginContentClass = 'login-prompt-' + this.uid + '-content';
+
+    //State
+    this.isLogin = true;
   }
 
   render() {
@@ -73,9 +89,15 @@ class LoginPrompt {
         passInputId: this.passInputId,
         usernameInputContainer: this.usernameInputContainer,
         usernameInputId: this.usernameInputId,
+        nameInputContainer: this.nameInputContainer,
+        nameInputId: this.nameInputId,
+        emailInputContainer: this.emailInputContainer,
+        emailInputId: this.emailInputId,
         loginLayoutClass: this.loginContentClass,
         loginContentClass: this.loginContentClass,
         responseId: this.responseId,
+        signupButtonId: this.signupButtonId,
+        signupFieldContainer: this.signupFieldContainer,
     }
 
     return ejs.render(template, dataIn);
@@ -90,6 +112,29 @@ class LoginPrompt {
       var button = document.getElementById(this.loginButtonId);
       button.onclick = callback;
     }
+  }
+
+  setSignupButtonListener(callback) {
+    if(typeof callback == 'function') {
+      var button = document.getElementById(this.signupButtonId);
+      button.onclick = callback;
+    }
+  }
+
+  getNameFromInput() {
+    var input = document.getElementById(this.nameInputId);
+    if(input == null) {
+      return input.value;
+    }
+    return null;
+  }
+
+  getEmailFromInput() {
+    var input = document.getElementById(this.emailInputId);
+    if(input == null) {
+      return input.value;
+    }
+    return null;
   }
 
   getUsernameFromInput() {
@@ -107,20 +152,76 @@ class LoginPrompt {
     response.innerText = text;
   }
 
+  setPromptToSignup() {
+    //Change Object State
+    this.isLogin = false;
+
+    var signupContainer = document.getElementById(this.signupFieldContainer);
+
+    //Create the name input field
+    var nameInputDiv = this.__createMdlTextField(this.nameInputContainer, this.nameInputId, "Name");
+    signupContainer.appendChild(nameInputDiv);
+    componentHandler.upgradeElement(nameInputDiv);
+
+    //Create the email input field
+    var emailInputDiv = this.__createMdlTextField(this.emailInputContainer, this.emailInputId, "Email");
+    signupContainer.appendChild(emailInputDiv);
+    componentHandler.upgradeElement(emailInputDiv);
+  }
+
+  setPromptToLogin() {
+    //Change Object State
+    this.isLogin = true;
+
+    var signupContainer = document.getElementById(this.signupFieldContainer);
+    signupContainer.innerHTML = "";
+  }
+
+  /** Example
+   * <div class="mdl-textfield mdl-js-textfield" id="<%= passInputContainer %>">
+   *   <input class="mdl-textfield__input" type="password" id="<%= passInputId %>" />
+   *   <label class="mdl-textfield__label" for="<%= passInputId %>">Password</label>
+   * </div>
+   */
+  __createMdlTextField(containerId, inputId, labelText) {
+    var inputDiv = document.createElement("div");
+    inputDiv.classList.add("mdl-textfield", "mdl-js-textfield");
+    inputDiv.id = containerId;
+    var input = document.createElement("input");
+    input.classList.add("mdl-textfield__input");
+    input.id = inputId;
+    inputDiv.appendChild(input);
+    var label = document.createElement("label");
+    label.classList.add("mdl-textfield__label");
+    label.setAttribute("for", inputId);
+    label.innerText = labelText;
+    inputDiv.appendChild(label);
+    
+    return inputDiv;
+  }
+
   configJs() {
     var passInput = document.getElementById(this.passInputContainer);
     var userInput = document.getElementById(this.usernameInputContainer);
     var loginBtn = document.getElementById(this.loginButtonId);
+    var signupBtn = document.getElementById(this.signupButtonId);
     componentHandler.upgradeElement(passInput);
     componentHandler.upgradeElement(userInput);
     componentHandler.upgradeElement(loginBtn);
+    componentHandler.upgradeElement(signupBtn);
 
     passInput.addEventListener("keyup", function(event) {
       event.preventDefault();
       if(event.keyCode == 13) { //The Enter Key
-        loginBtn.click();
+        if(isLogin) {
+          loginBtn.click();
+        } else {
+          signupBtn.click();
+        }
       }
     });
+    
+    //TODO: Handle signup click here
   }
 }
 

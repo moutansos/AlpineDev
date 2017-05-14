@@ -33,11 +33,23 @@ var navLogin = function() {
     mainView.setBaseComponent(prompt);
 
     prompt.setLoginButtonListener(function() {
-        socket.emit('login-user', {
-            username: prompt.getUsernameFromInput(),
-            pass_attempt: prompt.getPasswordFromInput(),
-        });
+        if(!prompt.isLogin) {
+            prompt.setPromptToLogin();
+        } else {
+            socket.emit('login-user', {
+                username: prompt.getUsernameFromInput(),
+                pass_attempt: prompt.getPasswordFromInput(),
+            });
+        }
     });
+
+    prompt.setSignupButtonListener(function() {
+        if(prompt.isLogin){
+            prompt.setPromptToSignup();
+        } else {
+            //Handle Signup
+        }
+    })
 
     socket.on('login-response', function(data) {
         prompt.setResponseText(data.msg);
