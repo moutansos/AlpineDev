@@ -36,24 +36,48 @@ var navLogin = function() {
         if(!prompt.isLogin) {
             prompt.setPromptToLogin();
         } else {
+            //TODO: Frontend validation
             socket.emit('login-user', {
                 username: prompt.getUsernameFromInput(),
                 pass_attempt: prompt.getPasswordFromInput(),
             });
         }
+        //TODO: Set Loading Spinnner/Bar
     });
 
     prompt.setSignupButtonListener(function() {
         if(prompt.isLogin){
             prompt.setPromptToSignup();
         } else {
-            //Handle Signup
-        }
+            //TODO: Frontend validation
+            var data = {
+                username: prompt.getUsernameFromInput(),
+                name: prompt.getNameFromInput(),
+                email: prompt.getEmailFromInput(),
+                password: prompt.getPasswordFromInput(),
+            }
+            console.log(data);
+            socket.emit('signup-user', data);
+        } 
+        //TODO: Set Loading Spinner/Bar
     })
 
     socket.on('login-response', function(data) {
-        prompt.setResponseText(data.msg);
+        if(!data.authorized) {
+            prompt.setResponseText(data.msg);
+        } else {
+            //TODO: Handle Auth Token
+        }
     });
+
+    socket.on('signup-response', function(data) {
+        if(!data.authorized) {
+            prompt.setResponseText(data.msg);
+            console.log('Sucessful Signup');
+        } else {
+            //TODO: Handle Auth Token and show signup sucessful
+        }
+    })
 }
 
 //Development Projects Grid

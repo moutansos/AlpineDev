@@ -123,7 +123,7 @@ class LoginPrompt {
 
   getNameFromInput() {
     var input = document.getElementById(this.nameInputId);
-    if(input == null) {
+    if(input) {
       return input.value;
     }
     return null;
@@ -131,7 +131,7 @@ class LoginPrompt {
 
   getEmailFromInput() {
     var input = document.getElementById(this.emailInputId);
-    if(input == null) {
+    if(input) {
       return input.value;
     }
     return null;
@@ -210,16 +210,16 @@ class LoginPrompt {
     componentHandler.upgradeElement(loginBtn);
     componentHandler.upgradeElement(signupBtn);
 
-    passInput.addEventListener("keyup", function(event) {
+    passInput.addEventListener("keyup", (function(event) {
       event.preventDefault();
       if(event.keyCode == 13) { //The Enter Key
-        if(isLogin) {
+        if(this.isLogin) {
           loginBtn.click();
-        } else {
+        } else if(!this.isLogin) {
           signupBtn.click();
         }
       }
-    });
+    }).bind(this));
     
     //TODO: Handle signup click here
   }

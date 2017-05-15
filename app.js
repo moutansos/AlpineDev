@@ -30,6 +30,9 @@ if (cluster.isMaster) {
     const express = require('express');
     const bodyParser = require('body-parser');
     const path = require('path');
+    
+    //Type Imports
+    const User = require('./lib/User.js');
 
     AWS.config.region = process.env.REGION
 
@@ -50,7 +53,7 @@ if (cluster.isMaster) {
     app.use('/dist', express.static(path.join(__dirname, 'dist')))
 
     app.get('/', function(req, res) {
-        res.render('index', {
+        res.render('index', { //Render views/index.ejs
             title: "AlpineDev"
         });
     });
@@ -86,6 +89,25 @@ if (cluster.isMaster) {
             else
             {
                 socket.emit('login-response', loginError);
+            }
+        });
+
+        socket.on('signup-user', function(data) {
+            var newUser = null;
+            if(User.userFromFrontendIsValid(data.username, data.name, data.email, data.password)) {
+                //TODO: Email verification?
+                var sucessfulResp = {
+                    authorized: true,
+                    token: "AUTHORIZED TOKEN",
+                    msg: "Signup Successful",
+                }
+                socket.emit('signup-response', sucessfulResp);
+            } else {
+                var errResp = {
+                    authorized: false,
+                    msg: "Unsucessful Signup"
+                }
+                socket.emit('signup-response', errResp);
             }
         });
     });
