@@ -102,6 +102,7 @@ if (cluster.isMaster) {
                     msg: "Signup Successful",
                 }
                 socket.emit('signup-response', sucessfulResp);
+                //TODO: create user in db.
             } else {
                 var errResp = {
                     authorized: false,
