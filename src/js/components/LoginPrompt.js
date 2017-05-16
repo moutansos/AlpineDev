@@ -40,6 +40,7 @@ const template = `<!-- Login Prompt -->
         </form>
         <a id="<%= responseId %>"></a>
       </div>
+      <div id="<%= progressConainer %>"></div>
       <div class="mdl-card__actions mdl-card--border">
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="<%= loginButtonId %>">
           Login
@@ -72,6 +73,10 @@ class LoginPrompt {
     this.emailInputId = idPrefix + this.uid + '-email-input';
     this.responseId = idPrefix + this.uid + '-response';
     this.signupFieldContainer = idPrefix + this.uid + '-signup-field-container';
+
+    //Progress
+    this.progressId = idPrefix + this.uid + '-progress-bar';
+    this.progressConainer = idPrefix + this.uid + '-progress-container';
     
     //CSS Classes
     this.loginLayoutClass = 'login-prompt-' + this.uid + '-layout';
@@ -98,6 +103,8 @@ class LoginPrompt {
         responseId: this.responseId,
         signupButtonId: this.signupButtonId,
         signupFieldContainer: this.signupFieldContainer,
+        progressId: this.progressId,
+        progressConainer: this.progressConainer,
     }
 
     return ejs.render(template, dataIn);
@@ -156,6 +163,7 @@ class LoginPrompt {
     //Change Object State
     this.isLogin = false;
 
+    this.setResponseText("");
     var signupContainer = document.getElementById(this.signupFieldContainer);
 
     //Create the name input field
@@ -172,9 +180,29 @@ class LoginPrompt {
   setPromptToLogin() {
     //Change Object State
     this.isLogin = true;
+    this.setResponseText("");
 
     var signupContainer = document.getElementById(this.signupFieldContainer);
     signupContainer.innerHTML = "";
+  }
+
+  /**
+   * <div id="<%= progressId %>" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
+   */
+  showLoading() {
+    var container = document.getElementById(this.progressConainer);
+
+    var progress = document.createElement('div');
+    progress.classList.add('mdl-progress', 'mdl-js-progress', 'mdl-progress_indeterminate');
+    progress.id = this.progressId;
+    container.appendChild(progress);
+
+    componentHandler.upgradeElement(progress);
+  }
+
+  hideLoading() {
+    var container = document.getElementById(this.progressConainer);
+    container.innerHTML = null;
   }
 
   /** Example
@@ -220,8 +248,6 @@ class LoginPrompt {
         }
       }
     }).bind(this));
-    
-    //TODO: Handle signup click here
   }
 }
 

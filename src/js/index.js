@@ -36,6 +36,7 @@ var navLogin = function() {
         if(!prompt.isLogin) {
             prompt.setPromptToLogin();
         } else {
+            prompt.showLoading();
             //TODO: Frontend validation
             socket.emit('login-user', {
                 username: prompt.getUsernameFromInput(),
@@ -49,6 +50,7 @@ var navLogin = function() {
         if(prompt.isLogin){
             prompt.setPromptToSignup();
         } else {
+            prompt.showLoading();
             //TODO: Frontend validation
             var data = {
                 username: prompt.getUsernameFromInput(),
@@ -63,6 +65,7 @@ var navLogin = function() {
     })
 
     socket.on('login-response', function(data) {
+        prompt.hideLoading();
         if(!data.authorized) {
             prompt.setResponseText(data.msg);
         } else {
@@ -71,6 +74,7 @@ var navLogin = function() {
     });
 
     socket.on('signup-response', function(data) {
+        prompt.hideLoading();
         if(!data.authorized) {
             prompt.setResponseText(data.msg);
             console.log('Sucessful Signup');
