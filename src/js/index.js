@@ -9,9 +9,11 @@ const Chat = require('./components/chat.js');
 const LoginPrompt = require('./components/LoginPrompt.js');
 const View = require('./view.js');
 const StorageArray = require('./storage-array.js');
+const StorageItem = require('./storage-item.js');
 
 console.log('Initializing AlpineDev Shell...');
 
+var loginKey = new StorageItem("login-key");
 var msgCache = new StorageArray('ad-msg-cache');
 console.log(msgCache.getItems());
 
@@ -69,7 +71,8 @@ var navLogin = function() {
         if(!data.authorized) {
             prompt.setResponseText(data.msg);
         } else {
-            //TODO: Handle Auth Token
+            prompt.setResponseText("");
+            //TODO: Handle auth tokens
         }
     });
 
@@ -79,6 +82,7 @@ var navLogin = function() {
             prompt.setResponseText(data.msg);
             console.log('Sucessful Signup');
         } else {
+            prompt.setResponseText("");
             //TODO: Handle Auth Token and show signup sucessful
         }
     })
