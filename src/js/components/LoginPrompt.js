@@ -202,7 +202,7 @@ class LoginPrompt {
 
   hideLoading() {
     var container = document.getElementById(this.progressConainer);
-    container.innerHTML = null;
+    container.innerHTML = "";
   }
 
   /** Example

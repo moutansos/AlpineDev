@@ -13,7 +13,7 @@ const StorageItem = require('./storage-item.js');
 
 console.log('Initializing AlpineDev Shell...');
 
-var loginKey = new StorageItem("login-key");
+var authToken = new StorageItem("auth-token");
 var msgCache = new StorageArray('ad-msg-cache');
 console.log(msgCache.getItems());
 
@@ -27,6 +27,15 @@ var navHome = function() {
 
     homeDevProjCard.setButtonListener(navDevProjects);
     socket.emit('chat-message', {name: 'Client', msg: 'User Navigated Home'});
+}
+
+//Logout From 
+var logout = function() {
+    var loginButton = document.getElementById('nav-login-1');
+    authToken.setItem(null);
+    loginButton.innerText = "Login";
+    loginButton.onclick = navLogin;
+    navHome();
 }
 
 //Login Layout
@@ -45,7 +54,6 @@ var navLogin = function() {
                 pass_attempt: prompt.getPasswordFromInput(),
             });
         }
-        //TODO: Set Loading Spinnner/Bar
     });
 
     prompt.setSignupButtonListener(function() {
@@ -62,8 +70,7 @@ var navLogin = function() {
             }
             console.log(data);
             socket.emit('signup-user', data);
-        } 
-        //TODO: Set Loading Spinner/Bar
+        }
     })
 
     socket.on('login-response', function(data) {
@@ -72,7 +79,11 @@ var navLogin = function() {
             prompt.setResponseText(data.msg);
         } else {
             prompt.setResponseText("");
-            //TODO: Handle auth tokens
+            authToken.setItem(data);
+            var loginButton = document.getElementById('nav-login-1');
+            loginButton.innerText = "Logout";
+            loginButton.onclick = logout;
+            navHome();
         }
     });
 
@@ -80,10 +91,13 @@ var navLogin = function() {
         prompt.hideLoading();
         if(!data.authorized) {
             prompt.setResponseText(data.msg);
-            console.log('Sucessful Signup');
         } else {
             prompt.setResponseText("");
-            //TODO: Handle Auth Token and show signup sucessful
+            authToken.setItem(data);
+            var loginButton = document.getElementById('nav-login-1');
+            loginButton.innerText = "Logout";
+            loginButton.onclick = logout;
+            navHome();
         }
     })
 }
