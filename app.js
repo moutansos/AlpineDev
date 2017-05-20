@@ -60,10 +60,6 @@ if (cluster.isMaster) {
 
     io.on('connection', function(socket){
         console.log('a user connected');
-        socket.on('chat-message', function(data){
-            console.log(data.name + ': ' + data.msg);
-            socket.broadcast.emit('chat-message', data);
-        });
         socket.on('disconnect', function(){
             console.log('user disconnected');
         });
@@ -109,6 +105,22 @@ if (cluster.isMaster) {
                     msg: "Unsucessful Signup"
                 }
                 socket.emit('signup-response', errResp);
+            }
+        });
+
+        socket.on('chat-message', function(data) {
+            console.log(data);
+            var auth = data.auth;
+            //TODO: Change to more secure login token
+            if(!auth || auth.authorized == false || auth.token !== 'AUTHORIZED TOKEN') {
+                //TODO: dereference the login token for this user because an unauthorized
+                //      token has been attempted. This will require login 
+                socket.emit('logout-client');
+            } else {
+                socket.broadcast.emit('chat-message', { 
+                    name: data.name, 
+                    msg: data.msg 
+                });
             }
         });
     });

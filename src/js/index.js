@@ -26,10 +26,9 @@ var navHome = function() {
     mainView.setBaseComponent(homeGrid);
 
     homeDevProjCard.setButtonListener(navDevProjects);
-    socket.emit('chat-message', {name: 'Client', msg: 'User Navigated Home'});
 }
 
-//Logout From 
+//Logout Client
 var logout = function() {
     var loginButton = document.getElementById('nav-login-1');
     authToken.setItem(null);
@@ -126,7 +125,6 @@ var navDevProjects = function() {
     devMinemanCard.setButtonListener(function() {
         window.open('https://github.com/moutansos/mineman');
     });
-    socket.emit('chat-message', {name: 'Client', msg: 'User Navigated To Dev'});
 }
 
 //Chat Compoenet
@@ -134,16 +132,13 @@ var navChat = function() {
     var chat = new Chat();
 
     mainView.setBaseComponent(chat);
-    
-    socket.emit('chat-message', {name: 'Client', msg: 'User Navigated to Chat'});
 
-    /*chat.setSendButtonListener(function(){
-        socket.emit('chat-message', {name: 'moutansos', msg: chat.getInputText()});
-        chat.setInputText(null);
-    });*/
-
-    chat.setSendButtonListener(function(){
-        var msg = {name: 'Test', msg: chat.getInputText()}
+    chat.setSendButtonListener(function() {
+        var msg = {
+            name: 'Test', 
+            msg: chat.getInputText(), 
+            auth: authToken.getItem(),
+        }
         socket.emit('chat-message', msg);
         chat.addMessage(msg);
         console.log(msg);
@@ -179,4 +174,8 @@ window.onload = function() {
     navDevProjectsEl.onclick = navDevProjects;
     navChatEl.onclick = navChat;
     navLoginEl.onclick = navLogin;
+
+    socket.on('logout-client', function() {
+        logout();
+    });
 }
