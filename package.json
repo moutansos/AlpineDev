@@ -5,6 +5,7 @@
   "dependencies": {
     "aws-sdk": "latest",
     "body-parser": "latest",
+    "dialog-polyfill": "^0.4.7",
     "ejs": "latest",
     "express": "latest",
     "socket.io": "^1.7.3"
@@ -15,7 +16,7 @@
     "build": "webpack"
   },
   "devDependencies": {
-    "css-loader": "^0.28.0",
+    "css-loader": "^0.28.2",
     "jquery": "^3.2.1",
     "material-design-lite": "^1.3.0",
     "style-loader": "^0.16.1",

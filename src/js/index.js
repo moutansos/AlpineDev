@@ -10,6 +10,7 @@ const LoginPrompt = require('./components/LoginPrompt.js');
 const View = require('./view.js');
 const StorageArray = require('./storage-array.js');
 const StorageItem = require('./storage-item.js');
+const Dialog = require('./components/dialog.js');
 
 console.log('Initializing AlpineDev Shell...');
 
