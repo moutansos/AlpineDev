@@ -123,6 +123,15 @@ if (cluster.isMaster) {
                 });
             }
         });
+
+        socket.on('authorize-token', function(data) {
+
+            if(data.authorized && data.token && data.token === 'AUTHORIZED TOKEN') {
+                socket.emit('authorized');
+            } else {
+                socket.emit('prompt-client-login');
+            }
+        });
     });
 
     var port = process.env.PORT || 3000;

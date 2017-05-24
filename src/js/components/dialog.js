@@ -9,7 +9,7 @@ const template = `<!-- Dialog -->
 <style type="text/css">
 </style>
 
-<dialog class="mdl-dialog">
+<dialog id="<%= dialogId %>" class="mdl-dialog">
     <h4 class="mdl-dialog__title">Allow data collection?</h4>
     <div class="mdl-dialog__content">
         <p>
@@ -26,6 +26,20 @@ const globalStyle = ``;
 class Dialog {
     constructor() {
         this.uid = uid.genUid();
+        this.dialogId = idPrefix + this.uid + "-main-dialog";
+    }
+
+    render() {
+        var dataIn = {
+            uid: this.uid,
+            dialogId: this,
+        }
+
+        return ejs.render(template, dataIn);
+    }
+
+    configJs() {
+
     }
 }
 

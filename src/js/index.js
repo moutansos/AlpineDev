@@ -130,29 +130,34 @@ var navDevProjects = function() {
 
 //Chat Compoenet
 var navChat = function() {
-    var chat = new Chat();
+    socket.emit('authorize-token', authToken.getItem());
 
-    mainView.setBaseComponent(chat);
+    //TODO: implement a timer for if there is no response
+    socket.on('authorized', function(){
+        var chat = new Chat();
 
-    chat.setSendButtonListener(function() {
-        var msg = {
-            name: 'Test', 
-            msg: chat.getInputText(), 
-            auth: authToken.getItem(),
+        mainView.setBaseComponent(chat);
+
+        chat.setSendButtonListener(function() {
+            var msg = {
+                name: 'Test', 
+                msg: chat.getInputText(), 
+                auth: authToken.getItem(),
+            }
+            socket.emit('chat-message', msg);
+            chat.addMessage(msg);
+            console.log(msg);
+            chat.setInputText(null);
+        });
+
+        var messages = msgCache.getItems();
+        for(var i = 0; i < messages.length; i++){
+            chat.addMessage(messages[i]);
         }
-        socket.emit('chat-message', msg);
-        chat.addMessage(msg);
-        console.log(msg);
-        chat.setInputText(null);
-    });
 
-    var messages = msgCache.getItems();
-    for(var i = 0; i < messages.length; i++){
-        chat.addMessage(messages[i]);
-    }
-
-    socket.on('chat-message', function(msg) {
-        chat.addMessage(msg);
+        socket.on('chat-message', function(msg) {
+            chat.addMessage(msg);
+        });
     });
 }
 
@@ -178,5 +183,10 @@ window.onload = function() {
 
     socket.on('logout-client', function() {
         logout();
+    });
+
+    socket.on('prompt-client-login', function() {
+        //TODO: Show dialog to authenticate user
+        console.log('Unauthorized attempt at access');
     });
 }
