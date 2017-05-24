@@ -33,6 +33,7 @@ if (cluster.isMaster) {
     
     //Type Imports
     const User = require('./lib/User.js');
+    const AWSDyDB = require('./lib/db/AWSDyDB.js');
 
     AWS.config.region = process.env.REGION
 
@@ -42,6 +43,8 @@ if (cluster.isMaster) {
 
     var snsTopic =  process.env.NEW_SIGNUP_TOPIC;
     var app = express();
+
+    var userTable = new AWSDyDB(env, "Users");
 
     var http = require('http').Server(app);
     var io = require('socket.io')(http);
