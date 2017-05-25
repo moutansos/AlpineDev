@@ -44,7 +44,7 @@ if (cluster.isMaster) {
     var snsTopic =  process.env.NEW_SIGNUP_TOPIC;
     var app = express();
 
-    var userTable = new AWSDyDB(env, "Users");
+    var db = new AWSDyDB(env);
 
     var http = require('http').Server(app);
     var io = require('socket.io')(http);
@@ -93,21 +93,38 @@ if (cluster.isMaster) {
 
         socket.on('signup-user', function(data) {
             var newUser = null;
-            if(User.userFromFrontendIsValid(data.username, data.name, data.email, data.password)) {
-                //TODO: Email verification?
+
+            function respondSuccess() {
                 var sucessfulResp = {
                     authorized: true,
                     token: "AUTHORIZED TOKEN",
                     msg: "Signup Successful",
                 }
                 socket.emit('signup-response', sucessfulResp);
-                //TODO: create user in db.
-            } else {
+            }
+
+            function respondError(message) {
                 var errResp = {
                     authorized: false,
-                    msg: "Unsucessful Signup"
+                    msg: message,
                 }
-                socket.emit('signup-response', errResp);
+                socket.emit('signup-response', errResp)
+            }
+
+            function handleDbAdd(err, message)
+            {
+                if(err)
+                {
+                    respondError(message);
+                }
+                respondSuccess();
+            }
+
+            if(User.userFromFrontendIsValid(data.username, data.name, data.email, data.password)) {
+                //TODO: Email verification?
+                db.addUser(new User(data.username, data.name, data.email, data.password, null, null, null), handleDbAdd);
+            } else {
+                respondError("The input user is invalid.");
             }
         });
 

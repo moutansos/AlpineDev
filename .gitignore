@@ -1,3 +1,4 @@
 node_modules
 bundle.js
 *.log*
+aws-dev-config.json

@@ -71,7 +71,7 @@ var navLogin = function() {
             console.log(data);
             socket.emit('signup-user', data);
         }
-    })
+    });
 
     socket.on('login-response', function(data) {
         prompt.hideLoading();
@@ -99,7 +99,7 @@ var navLogin = function() {
             loginButton.onclick = logout;
             navHome();
         }
-    })
+    });
 }
 
 //Development Projects Grid
