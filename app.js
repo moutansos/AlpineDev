@@ -101,6 +101,7 @@ if (cluster.isMaster) {
                     msg: "Signup Successful",
                 }
                 socket.emit('signup-response', sucessfulResp);
+                console.log("Added User To DB");
             }
 
             function respondError(message) {
@@ -122,7 +123,17 @@ if (cluster.isMaster) {
 
             if(User.userFromFrontendIsValid(data.username, data.name, data.email, data.password)) {
                 //TODO: Email verification?
-                db.addUser(new User(data.username, data.name, data.email, data.password, null, null, null), handleDbAdd);
+                var newUser = new User(data.username, data.name, data.email, data.password, null, null, null);
+
+                function handleHashPass(err, user) {
+                    if(err) {
+                        respondError("Unable to create a password hash.");
+                    } else {
+                        db.addUser(user, handleDbAdd);
+                    }
+                }
+
+                newUser.hashPassword(handleHashPass);
             } else {
                 respondError("The input user is invalid.");
             }
