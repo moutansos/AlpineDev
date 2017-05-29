@@ -67,31 +67,51 @@ if (cluster.isMaster) {
             console.log('user disconnected');
         });
 
-        socket.on('login-user', function(data) {
-            var authToken = {
-                authorized: true,
-                token: "AUTHORIZED TOKEN",
-                msg: "Login Sucessful",
-            };
-            var loginError = {
-                authorized: false,
-                msg: "Invalid username or password",
-            };
-            var username = data.username;
-            var pass_attempt = data.pass_attempt;
+        //Even Handlers
+        function handleUserLogin(data) {
+            var userFromFrontend = new User(data.username, null, null, data.pass_attempt);
 
-            if(username == 'moutansos' &&
-               pass_attempt == '1234') //TODO: replace with a real authentication check
-            {
+            function handleRespondSucess() {
+                var authToken = {
+                    authorized: true,
+                    token: "AUTHORIZED TOKEN",
+                    msg: "Login Sucessful",
+                };
+
                 socket.emit('login-response', authToken);
             }
-            else
-            {
+
+            function handleRespondError() {
+                var loginError = {
+                    authorized: false,
+                    msg: "Invalid username or password",
+                };
+
                 socket.emit('login-response', loginError);
             }
-        });
 
-        socket.on('signup-user', function(data) {
+            function handleAuthenticateUser(err, isAuthorized) {
+                if(err || !isAuthorized) {
+                    console.log('Error: ' + JSON.stringify(err));
+                    console.log('IsAuthorized: ' + JSON.stringify(isAuthorized));
+                    handleRespondError();
+                } else {
+                    handleRespondSucess();
+                }
+            }
+
+            function handleGetUserFromDb(err, user) {
+                if(err || user == null) {
+                    handleRespondError();
+                } else {
+                    user.authenticateUser(userFromFrontend, handleAuthenticateUser);
+                }
+            }
+            
+            db.getUserByUsername(userFromFrontend.userId, handleGetUserFromDb)
+        }
+
+        function handleUserSignup(data) {
             var newUser = null;
 
             function respondSuccess() {
@@ -137,9 +157,9 @@ if (cluster.isMaster) {
             } else {
                 respondError("The input user is invalid.");
             }
-        });
+        }
 
-        socket.on('chat-message', function(data) {
+        function handleChatMessage(data) {
             console.log(data);
             var auth = data.auth;
             //TODO: Change to more secure login token
@@ -148,21 +168,26 @@ if (cluster.isMaster) {
                 //      token has been attempted. This will require login 
                 socket.emit('logout-client');
             } else {
-                socket.broadcast.emit('chat-message', { 
+                socket.broadcast.emit('chat-message', {
                     name: data.name, 
                     msg: data.msg 
                 });
             }
-        });
+        }
 
-        socket.on('authorize-token', function(data) {
-
+        function handleAuthorizeToken(data) {
             if(data.authorized && data.token && data.token === 'AUTHORIZED TOKEN') {
                 socket.emit('authorized');
             } else {
                 socket.emit('prompt-client-login');
             }
-        });
+        }
+
+        //Event Listeners
+        socket.on('login-user', handleUserLogin);
+        socket.on('signup-user', handleUserSignup);
+        socket.on('chat-message', handleChatMessage);
+        socket.on('authorize-token', handleAuthorizeToken);
     });
 
     var port = process.env.PORT || 3000;
