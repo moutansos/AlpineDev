@@ -192,8 +192,10 @@ class LoginPrompt {
   showLoading() {
     var container = document.getElementById(this.progressConainer);
 
+    container.innerHTML = "";
+
     var progress = document.createElement('div');
-    progress.classList.add('mdl-progress', 'mdl-js-progress', 'mdl-progress_indeterminate');
+    progress.classList.add('mdl-progress', 'mdl-js-progress', 'mdl-progress__indeterminate');
     progress.id = this.progressId;
     container.appendChild(progress);
 
