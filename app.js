@@ -17,7 +17,6 @@ if (cluster.isMaster) {
 
     // Listen for terminating workers
     cluster.on('exit', function (worker) {
-
         // Replace the terminated workers
         console.log('Worker ' + worker.id + ' died :(');
         cluster.fork();
@@ -41,7 +40,7 @@ if (cluster.isMaster) {
 
     var env = process.env.NODE_ENV || 'dev';
 
-    var snsTopic =  process.env.NEW_SIGNUP_TOPIC;
+    var snsTopic = process.env.NEW_SIGNUP_TOPIC;
     var app = express();
 
     var db = new AWSDyDB(env);
