@@ -175,10 +175,11 @@ if (cluster.isMaster) {
         }
 
         function handleAuthorizeToken(data) {
+            //TODO: Implement this for real
             if(data.authorized && data.token && data.token === 'AUTHORIZED TOKEN') {
-                socket.emit('authorized');
+                socket.emit(data.sucessCallback);
             } else {
-                socket.emit('prompt-client-login');
+                socket.emit(data.failCallback);
             }
         }
 

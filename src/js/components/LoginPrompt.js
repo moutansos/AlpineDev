@@ -40,7 +40,7 @@ const template = `<!-- Login Prompt -->
         </form>
         <a id="<%= responseId %>"></a>
       </div>
-      <div id="<%= progressConainer %>"></div>
+      <div id="<%= progressContainer %>"></div>
       <div class="mdl-card__actions mdl-card--border">
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="<%= loginButtonId %>">
           Login
@@ -76,7 +76,7 @@ class LoginPrompt {
 
     //Progress
     this.progressId = idPrefix + this.uid + '-progress-bar';
-    this.progressConainer = idPrefix + this.uid + '-progress-container';
+    this.progressContainer = idPrefix + this.uid + '-progress-container';
     
     //CSS Classes
     this.loginLayoutClass = 'login-prompt-' + this.uid + '-layout';
@@ -104,7 +104,7 @@ class LoginPrompt {
         signupButtonId: this.signupButtonId,
         signupFieldContainer: this.signupFieldContainer,
         progressId: this.progressId,
-        progressConainer: this.progressConainer,
+        progressContainer: this.progressContainer,
     }
 
     return ejs.render(template, dataIn);
@@ -190,7 +190,7 @@ class LoginPrompt {
    * <div id="<%= progressId %>" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
    */
   showLoading() {
-    var container = document.getElementById(this.progressConainer);
+    var container = document.getElementById(this.progressContainer);
 
     container.innerHTML = "";
 
@@ -203,8 +203,10 @@ class LoginPrompt {
   }
 
   hideLoading() {
-    var container = document.getElementById(this.progressConainer);
-    container.innerHTML = "";
+    var container = document.getElementById(this.progressContainer);
+    if(container) {
+        container.innerHTML = "";
+    }
   }
 
   /** Example

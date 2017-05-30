@@ -18,6 +18,9 @@ var authToken = new StorageItem("auth-token");
 var msgCache = new StorageArray('ad-msg-cache');
 console.log(msgCache.getItems());
 
+//Setup Components
+var prompt = new LoginPrompt();
+
 // Home Grid
 var navHome = function() {
     var homeWelcomeCard = new WideCard('./dist/img/welcome.png', 'Welcome', 'Welcome to AlpineDev, my portfolio and hub to development', 'About AlpineDev', false);
@@ -40,7 +43,6 @@ var logout = function() {
 
 //Login Layout
 var navLogin = function() {
-    var prompt = new LoginPrompt();
     mainView.setBaseComponent(prompt);
 
     prompt.setLoginButtonListener(function() {
@@ -78,11 +80,8 @@ var navLogin = function() {
         if(!data.authorized) {
             prompt.setResponseText(data.msg);
         } else {
-            prompt.setResponseText("");
             authToken.setItem(data);
-            var loginButton = document.getElementById('nav-login-1');
-            loginButton.innerText = "Logout";
-            loginButton.onclick = logout;
+            handleLoggedIn();
             navHome();
         }
     });
@@ -94,9 +93,7 @@ var navLogin = function() {
         } else {
             prompt.setResponseText("");
             authToken.setItem(data);
-            var loginButton = document.getElementById('nav-login-1');
-            loginButton.innerText = "Logout";
-            loginButton.onclick = logout;
+            handleLoggedIn();
             navHome();
         }
     });
@@ -130,10 +127,7 @@ var navDevProjects = function() {
 
 //Chat Compoenet
 var navChat = function() {
-    socket.emit('authorize-token', authToken.getItem());
-
-    //TODO: implement a timer for if there is no response
-    socket.on('authorized', function(){
+    if(authToken.getItem()) {
         var chat = new Chat();
 
         mainView.setBaseComponent(chat);
@@ -158,13 +152,42 @@ var navChat = function() {
         socket.on('chat-message', function(msg) {
             chat.addMessage(msg);
         });
-    });
+    } else {
+        navLogin();
+    }
+}
+
+function handleLoggedIn() {
+    var loginButton = document.getElementById('nav-login-1');
+    loginButton.innerText = "Logout";
+    loginButton.onclick = logout;
+}
+
+function authenticateToken() {
+    if(authToken.getItem()) {
+        function handleAuthorized() {
+            handleLoggedIn();
+        }
+
+        function handleFailedAuthorized() {
+            authToken.clear();
+        }
+
+        var token = authToken.getItem();
+        token.sucessCallback = 'initial-authorized';
+        token.failCallback = 'inital-fail-authorized';
+
+        socket.on(token.sucessCallback, handleAuthorized);
+        socket.on(token.failCallback, handleFailedAuthorized);
+        socket.emit('authorize-token', token);
+    }
 }
 
 //Setup the main view
 var mainView = new View('main-view');
 
 window.onload = function() {
+    authenticateToken();
     console.log('Loaded.');
 
     //Initial Load
