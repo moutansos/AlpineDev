@@ -161,12 +161,23 @@ class LoginPrompt {
         var pass = document.getElementById(this.passInputId);
 
         if(this.isLogin) {
-            callback(err, pass.value);
-            return pass.value;
+            if(!pass || !pass.value) {
+                var err = "Please input a password";
+                callback(err, null);
+                return null;
+            } else {
+                callback(null, pass.value);
+                return pass.value;
+            }
         } else {
             var passVerify = document.getElementById(this.passwordVerifyInputId);
             if(pass.value !== passVerify.value) {
                 var err = "The passwords to not match"
+                callback(err, null);
+                return null;
+            } else if(!pass || !pass.value ||
+                      !passVerify || !passVerify.value) {
+                var err = "Please input a password";
                 callback(err, null);
                 return null;
             } else {
