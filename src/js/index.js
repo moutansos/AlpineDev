@@ -51,10 +51,20 @@ var navLogin = function() {
         } else {
             prompt.showLoading();
             //TODO: Frontend validation
-            socket.emit('login-user', {
-                username: prompt.getUsernameFromInput(),
-                pass_attempt: prompt.getPasswordFromInput(),
-            });
+            function handlePasswordValidation(err, pass) {
+                if(err) {
+                    prompt.hideLoading();
+                    prompt.setResponseText(err);
+                } else {
+                    var data = {
+                        username: prompt.getUsernameFromInput(),
+                        pass_attempt: pass,
+                    }
+                    socket.emit('login-user', data);
+                }
+            }
+
+            prompt.getPasswordFromInput(handlePasswordValidation);
         }
     });
 
@@ -63,15 +73,25 @@ var navLogin = function() {
             prompt.setPromptToSignup();
         } else {
             prompt.showLoading();
-            //TODO: Frontend validation
-            var data = {
-                username: prompt.getUsernameFromInput(),
-                name: prompt.getNameFromInput(),
-                email: prompt.getEmailFromInput(),
-                password: prompt.getPasswordFromInput(),
+
+            function handlePasswordVerify(err, pass) {
+                if(err) {
+                    prompt.hideLoading();
+                    prompt.setResponseText(err);
+                } else {
+                    var data = {
+                        username: prompt.getUsernameFromInput(),
+                        name: prompt.getNameFromInput(),
+                        email: prompt.getEmailFromInput(),
+                        password: pass,
+                    }
+                    console.log(data);
+                    socket.emit('signup-user', data);
+                }
             }
-            console.log(data);
-            socket.emit('signup-user', data);
+            //TODO: Frontend validation
+
+            prompt.getPasswordFromInput(handlePasswordVerify);
         }
     });
 

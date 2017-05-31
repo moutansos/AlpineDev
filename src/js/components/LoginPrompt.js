@@ -37,6 +37,8 @@ const template = `<!-- Login Prompt -->
             <input class="mdl-textfield__input" type="password" id="<%= passInputId %>" />
             <label class="mdl-textfield__label" for="<%= passInputId %>">Password</label>
           </div>
+          <div id="<%= signupPasswordVerifyFieldContainer %>">
+          </div>
         </form>
         <a id="<%= responseId %>"></a>
       </div>
@@ -67,12 +69,17 @@ class LoginPrompt {
     this.passInputId = idPrefix + this.uid + '-pass-input';
     this.usernameInputContainer = idPrefix + this.uid + '-username-input-container';
     this.usernameInputId = idPrefix + this.uid + '-username-input';
+    this.responseId = idPrefix + this.uid + '-response';
+
+    //Signup
+    this.signupFieldContainer = idPrefix + this.uid + '-signup-field-container';
+    this.signupPasswordVerifyFieldContainer = idPrefix + this.uid + '-signup-password-verify-container';
+    this.passwordVerifyInputContainer = idPrefix + this.uid + '-signup-password-verify-input-contianer';
+    this.passwordVerifyInputId = idPrefix + this.uid + '-signup-password-verify-input';
     this.nameInputContainer = idPrefix + this.uid + '-name-input-container';
-    this.nameInputId = idPrefix + this.uid + '-name-input'
+    this.nameInputId = idPrefix + this.uid + '-name-input';
     this.emailInputContainer = idPrefix + this.uid + '-email-input-container';
     this.emailInputId = idPrefix + this.uid + '-email-input';
-    this.responseId = idPrefix + this.uid + '-response';
-    this.signupFieldContainer = idPrefix + this.uid + '-signup-field-container';
 
     //Progress
     this.progressId = idPrefix + this.uid + '-progress-bar';
@@ -105,6 +112,7 @@ class LoginPrompt {
         signupFieldContainer: this.signupFieldContainer,
         progressId: this.progressId,
         progressContainer: this.progressContainer,
+        signupPasswordVerifyFieldContainer: this.signupPasswordVerifyFieldContainer,
     }
 
     return ejs.render(template, dataIn);
@@ -128,131 +136,163 @@ class LoginPrompt {
     }
   }
 
-  getNameFromInput() {
-    var input = document.getElementById(this.nameInputId);
-    if(input) {
-      return input.value;
-    }
-    return null;
-  }
-
-  getEmailFromInput() {
-    var input = document.getElementById(this.emailInputId);
-    if(input) {
-      return input.value;
-    }
-    return null;
-  }
-
-  getUsernameFromInput() {
-    var input = document.getElementById(this.usernameInputId);
-    return input.value;
-  }
-
-  getPasswordFromInput() {
-    var pass = document.getElementById(this.passInputId);
-    return pass.value;
-  }
-
-  setResponseText(text) {
-    var response = document.getElementById(this.responseId);
-    response.innerText = text;
-  }
-
-  setPromptToSignup() {
-    //Change Object State
-    this.isLogin = false;
-
-    this.setResponseText("");
-    var signupContainer = document.getElementById(this.signupFieldContainer);
-
-    //Create the name input field
-    var nameInputDiv = this.__createMdlTextField(this.nameInputContainer, this.nameInputId, "Name");
-    signupContainer.appendChild(nameInputDiv);
-    componentHandler.upgradeElement(nameInputDiv);
-
-    //Create the email input field
-    var emailInputDiv = this.__createMdlTextField(this.emailInputContainer, this.emailInputId, "Email");
-    signupContainer.appendChild(emailInputDiv);
-    componentHandler.upgradeElement(emailInputDiv);
-  }
-
-  setPromptToLogin() {
-    //Change Object State
-    this.isLogin = true;
-    this.setResponseText("");
-
-    var signupContainer = document.getElementById(this.signupFieldContainer);
-    signupContainer.innerHTML = "";
-  }
-
-  /**
-   * <div id="<%= progressId %>" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
-   */
-  showLoading() {
-    var container = document.getElementById(this.progressContainer);
-
-    container.innerHTML = "";
-
-    var progress = document.createElement('div');
-    progress.classList.add('mdl-progress', 'mdl-js-progress', 'mdl-progress__indeterminate');
-    progress.id = this.progressId;
-    container.appendChild(progress);
-
-    componentHandler.upgradeElement(progress);
-  }
-
-  hideLoading() {
-    var container = document.getElementById(this.progressContainer);
-    if(container) {
-        container.innerHTML = "";
-    }
-  }
-
-  /** Example
-   * <div class="mdl-textfield mdl-js-textfield" id="<%= passInputContainer %>">
-   *   <input class="mdl-textfield__input" type="password" id="<%= passInputId %>" />
-   *   <label class="mdl-textfield__label" for="<%= passInputId %>">Password</label>
-   * </div>
-   */
-  __createMdlTextField(containerId, inputId, labelText) {
-    var inputDiv = document.createElement("div");
-    inputDiv.classList.add("mdl-textfield", "mdl-js-textfield");
-    inputDiv.id = containerId;
-    var input = document.createElement("input");
-    input.classList.add("mdl-textfield__input");
-    input.id = inputId;
-    inputDiv.appendChild(input);
-    var label = document.createElement("label");
-    label.classList.add("mdl-textfield__label");
-    label.setAttribute("for", inputId);
-    label.innerText = labelText;
-    inputDiv.appendChild(label);
-    
-    return inputDiv;
-  }
-
-  configJs() {
-    var passInput = document.getElementById(this.passInputContainer);
-    var userInput = document.getElementById(this.usernameInputContainer);
-    var loginBtn = document.getElementById(this.loginButtonId);
-    var signupBtn = document.getElementById(this.signupButtonId);
-    componentHandler.upgradeElement(passInput);
-    componentHandler.upgradeElement(userInput);
-    componentHandler.upgradeElement(loginBtn);
-    componentHandler.upgradeElement(signupBtn);
-
-    passInput.addEventListener("keyup", (function(event) {
-      event.preventDefault();
-      if(event.keyCode == 13) { //The Enter Key
-        if(this.isLogin) {
-          loginBtn.click();
-        } else if(!this.isLogin) {
-          signupBtn.click();
+    getNameFromInput() {
+        var input = document.getElementById(this.nameInputId);
+        if(input) {
+            return input.value;
         }
-      }
-    }).bind(this));
-  }
+        return null;
+    }
+
+    getEmailFromInput() {
+        var input = document.getElementById(this.emailInputId);
+        if(input) {
+            return input.value;
+        }
+        return null;
+    }
+
+    getUsernameFromInput() {
+        var input = document.getElementById(this.usernameInputId);
+        return input.value;
+    }
+
+    getPasswordFromInput(callback) {
+        var pass = document.getElementById(this.passInputId);
+
+        if(this.isLogin) {
+            callback(err, pass.value);
+            return pass.value;
+        } else {
+            var passVerify = document.getElementById(this.passwordVerifyInputId);
+            if(pass.value !== passVerify.value) {
+                var err = "The passwords to not match"
+                callback(err, null);
+                return null;
+            } else {
+                callback(null, pass.value);
+                return pass.value;
+            }
+        }
+    }
+
+    setResponseText(text) {
+        var response = document.getElementById(this.responseId);
+        response.innerText = text;
+    }
+
+    setPromptToSignup() {
+        //Change Object State
+        this.isLogin = false;
+
+        this.setResponseText('');
+        var signupContainer = document.getElementById(this.signupFieldContainer);
+        var signupPasswordVerifyFieldContainer = document.getElementById(this.signupPasswordVerifyFieldContainer);
+
+        //Create the name input field
+        var nameInputDiv = this.__createMdlTextField(this.nameInputContainer, this.nameInputId, 'Name');
+        signupContainer.appendChild(nameInputDiv);
+        componentHandler.upgradeElement(nameInputDiv);
+
+        //Create the email input field
+        var emailInputDiv = this.__createMdlTextField(this.emailInputContainer, this.emailInputId, 'Email');
+        signupContainer.appendChild(emailInputDiv);
+        componentHandler.upgradeElement(emailInputDiv);
+
+        //Create the second password box
+        var passwordVerifyDiv = this.__createMdlPasswordField(this.passwordVerifyInputContainer, this.passwordVerifyInputId, 'Verify Password');
+        signupPasswordVerifyFieldContainer.appendChild(passwordVerifyDiv);
+        componentHandler.upgradeElement(passwordVerifyDiv);
+    }
+
+    setPromptToLogin() {
+        //Change Object State
+        this.isLogin = true;
+        this.setResponseText('');
+
+        var signupContainer = document.getElementById(this.signupFieldContainer);
+        signupContainer.innerHTML = '';
+
+        var signupPasswordVerifyFieldContainer = document.getElementById(this.signupPasswordVerifyFieldContainer);
+        signupPasswordVerifyFieldContainer.innerHTML = '';
+    }
+
+    showLoading() {
+        var container = document.getElementById(this.progressContainer);
+
+        container.innerHTML = "";
+
+        var progress = document.createElement('div');
+        progress.classList.add('mdl-progress', 'mdl-js-progress', 'mdl-progress__indeterminate');
+        progress.id = this.progressId;
+        container.appendChild(progress);
+
+        componentHandler.upgradeElement(progress);
+    }
+
+    hideLoading() {
+        var container = document.getElementById(this.progressContainer);
+        if(container) {
+            container.innerHTML = "";
+        }
+    }
+
+    __createMdlTextField(containerId, inputId, labelText) {
+        var inputDiv = document.createElement("div");
+        inputDiv.classList.add("mdl-textfield", "mdl-js-textfield");
+        inputDiv.id = containerId;
+        var input = document.createElement("input");
+        input.classList.add("mdl-textfield__input");
+        input.id = inputId;
+        inputDiv.appendChild(input);
+        var label = document.createElement("label");
+        label.classList.add("mdl-textfield__label");
+        label.setAttribute("for", inputId);
+        label.innerText = labelText;
+        inputDiv.appendChild(label);
+
+        return inputDiv;
+    }
+
+    __createMdlPasswordField(containerId, fieldId, labelText) {
+        var inputDiv = document.createElement('div');
+        inputDiv.classList.add('mdl-textfield', 'mdl-js-textfield');
+        inputDiv.id = containerId;
+        var input = document.createElement('input');
+        input.classList.add('mdl-textfield__input');
+        input.type = 'password';
+        input.id = fieldId;
+        inputDiv.appendChild(input);
+        var label = document.createElement('label');
+        label.classList.add('mdl-textfield__label');
+        label.setAttribute("for", fieldId);
+        label.innerText = labelText;
+        inputDiv.appendChild(label);
+
+        return inputDiv;
+    }
+
+    configJs() {
+        var passInput = document.getElementById(this.passInputContainer);
+        var userInput = document.getElementById(this.usernameInputContainer);
+        var loginBtn = document.getElementById(this.loginButtonId);
+        var signupBtn = document.getElementById(this.signupButtonId);
+        componentHandler.upgradeElement(passInput);
+        componentHandler.upgradeElement(userInput);
+        componentHandler.upgradeElement(loginBtn);
+        componentHandler.upgradeElement(signupBtn);
+
+        passInput.addEventListener("keyup", (function(event) {
+            event.preventDefault();
+            if(event.keyCode == 13) { //The Enter Key
+                if(this.isLogin) {
+                    loginBtn.click();
+                } else if(!this.isLogin) {
+                    signupBtn.click();
+                }
+            }
+        }).bind(this));
+    }
 }
 
 //Public API
