@@ -10,7 +10,8 @@ const LoginPrompt = require('./components/LoginPrompt.js');
 const View = require('./view.js');
 const StorageArray = require('./storage-array.js');
 const StorageItem = require('./storage-item.js');
-const Dialog = require('./components/dialog.js');
+//const Dialog = require('./components/dialog.js');
+const Article = require('./components/Article.js');
 
 console.log('Initializing AlpineDev Shell...');
 
@@ -28,8 +29,27 @@ var navHome = function() {
     var homeGrid = new Grid([[homeWelcomeCard, homeDevProjCard]]);
 
     mainView.setBaseComponent(homeGrid);
-
     homeDevProjCard.setButtonListener(navDevProjects);
+    homeWelcomeCard.setButtonListener(navAbout);
+
+}
+// About Site
+var navAbout = function() {
+    var header = "About AlpineDev";
+    var sitePath = ["AlpineDev", "About Site"];
+    var text = `
+    <p>
+    AlpineDev is a site to showcase my projects and it provides an
+    example of EJS frontend templating. All the components and pages
+    in this site are rendered using EJS in the frontend. 
+    </p>
+    <p>
+    This site is styled using templates and components from Material
+    Design Lite which can be found here <a href="https://getmdl.io/">https://getmdl.io</a>.
+    The interactive components are easy to use and lightweight.
+    </p>`;
+    var aboutArticle = new Article(header, sitePath, text);
+    mainView.setBaseComponent(aboutArticle);
 }
 
 //Logout Client
@@ -218,11 +238,13 @@ window.onload = function() {
     var navDevProjectsEl = document.getElementById('nav-dev-1');
     var navChatEl = document.getElementById('nav-chat-1');
     var navLoginEl = document.getElementById('nav-login-1');
+    var navAboutEl = document.getElementById('nav-about-1');
 
     navHomeEl.onclick = navHome;
     navDevProjectsEl.onclick = navDevProjects;
     navChatEl.onclick = navChat;
     navLoginEl.onclick = navLogin;
+    navAboutEl.onclick = navAbout;
 
     socket.on('logout-client', function() {
         logout();
