@@ -32,6 +32,7 @@ if (cluster.isMaster) {
     
     //Type Imports
     const User = require('./lib/User.js');
+    const LoginToken = require('./lib/LoginToken.js');
     const AWSDyDB = require('./lib/db/AWSDyDB.js');
 
     AWS.config.region = process.env.REGION
@@ -70,20 +71,30 @@ if (cluster.isMaster) {
         function handleUserLogin(data) {
             var userFromFrontend = new User(data.username, null, null, data.pass_attempt);
 
-            function handleRespondSucess() {
-                var authToken = {
-                    authorized: true,
-                    token: "AUTHORIZED TOKEN",
-                    msg: "Login Sucessful",
-                };
+            function handleAddTokenToDb(added, msg, token) {
+                if(added) {
+                    token.authorized = true;
+                    socket.emit('login-response', token);
 
-                socket.emit('login-response', authToken);
+                    console.log('Token added to db. Token: ' + JSON.stringify(token, null, 2));
+                } else {
+                    handleRespondError(msg);
+                    console.log('Token not added to db.');
+                }
             }
 
-            function handleRespondError() {
+            function handleRespondSucess() {
+                var token = new LoginToken(userFromFrontend.userId, null);
+                db.addToken(token, handleAddTokenToDb);
+            }
+
+            function handleRespondError(msg) {
+                if(msg == null) {
+                    msg = "Invalid username or password";
+                }
                 var loginError = {
                     authorized: false,
-                    msg: "Invalid username or password",
+                    msg: msg,
                 };
 
                 socket.emit('login-response', loginError);
@@ -113,13 +124,18 @@ if (cluster.isMaster) {
         function handleUserSignup(data) {
             var newUser = null;
 
-            function respondSuccess() {
-                var sucessfulResp = {
-                    authorized: true,
-                    token: "AUTHORIZED TOKEN",
-                    msg: "Signup Successful",
+            function handleAddTokenToDb(added, msg, token) {
+                if(added) {
+                    token.authorized = true;
+                    socket.emit('signup-response', token);
+                } else {
+                    handleRespondError(msg);
                 }
-                socket.emit('signup-response', sucessfulResp);
+            }
+
+            function respondSuccess() {
+                var token = new LoginToken(newUser.userId, null);
+                db.addToken(token, handleAddTokenToDb);
                 console.log("Added User To DB");
             }
 
@@ -131,8 +147,7 @@ if (cluster.isMaster) {
                 socket.emit('signup-response', errResp)
             }
 
-            function handleDbAdd(err, message)
-            {
+            function handleDbAdd(err, message) {
                 if(err)
                 {
                     respondError(message);
@@ -142,7 +157,7 @@ if (cluster.isMaster) {
 
             if(User.userFromFrontendIsValid(data.username, data.name, data.email, data.password)) {
                 //TODO: Email verification?
-                var newUser = new User(data.username, data.name, data.email, data.password, null, null, null);
+                newUser = new User(data.username, data.name, data.email, data.password, null, null, null);
 
                 function handleHashPass(err, user) {
                     if(err) {
@@ -175,12 +190,26 @@ if (cluster.isMaster) {
         }
 
         function handleAuthorizeToken(data) {
-            //TODO: Implement this for real
-            if(data.authorized && data.token && data.token === 'AUTHORIZED TOKEN') {
-                socket.emit(data.sucessCallback);
-            } else {
-                socket.emit(data.failCallback);
+            function checkAuthorized(tokenFromDb) {
+                if(tokenFromDb.token && data.token && data.token === tokenFromDb.token) {
+                    socket.emit(data.sucessCallback);
+                } else {
+                    socket.emit(data.failCallback);
+                }
             }
+
+            function handleGetTokenFromDb(err, token) {
+
+                if(err) {
+                    socket.emit(data.failCallback);
+                    console.log('Error getting token from database: ' + JSON.stringify(err, null, 2));
+                } else {
+                    console.log('Got token from db: ' + JSON.stringify(token, null, 2));
+                    checkAuthorized(token);
+                }
+            }
+
+            db.getTokenByUsername(data.userId, handleGetTokenFromDb);
         }
 
         //Event Listeners
