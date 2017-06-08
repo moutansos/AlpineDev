@@ -65,7 +65,7 @@ if (cluster.isMaster) {
     if(env === 'dev') {
         io.adapter(redis({ host: 'localhost', port: 6379 }));
     } else {
-        //TODO: figure this out
+        io.adapter(redis({ host: process.env.REDIS_URL, port: REDIS_PORT }));
     }
     io.on('connection', function(socket){
         console.log('a user connected');
