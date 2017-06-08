@@ -8,7 +8,8 @@
     "dialog-polyfill": "^0.4.7",
     "ejs": "latest",
     "express": "latest",
-    "socket.io": "^1.7.3"
+    "socket.io": "^2.0.2",
+    "socket.io-redis": "^5.1.0"
   },
   "scripts": {
     "start": "node app.js",

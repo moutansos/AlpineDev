@@ -48,6 +48,7 @@ if (cluster.isMaster) {
 
     var http = require('http').Server(app);
     var io = require('socket.io')(http);
+    var redis = require('socket.io-redis');
 
     app.set('view engine', 'ejs');
     app.set('views', __dirname + '/views');
@@ -61,6 +62,11 @@ if (cluster.isMaster) {
         });
     });
 
+    if(env === 'dev') {
+        io.adapter(redis({ host: 'localhost', port: 6379 }));
+    } else {
+        //TODO: figure this out
+    }
     io.on('connection', function(socket){
         console.log('a user connected');
         socket.on('disconnect', function(){
@@ -174,19 +180,28 @@ if (cluster.isMaster) {
         }
 
         function handleChatMessage(data) {
-            console.log(data);
             var auth = data.auth;
-            //TODO: Change to more secure login token
-            if(!auth || auth.authorized == false || auth.token !== 'AUTHORIZED TOKEN') {
-                //TODO: dereference the login token for this user because an unauthorized
-                //      token has been attempted. This will require login 
+
+            function respondError() {
                 socket.emit('logout-client');
-            } else {
-                socket.broadcast.emit('chat-message', {
-                    name: data.name, 
-                    msg: data.msg 
-                });
             }
+
+            function handleGetTokenFromDb(err, token) {
+                if(err || !token) {
+                    respondError();
+                } else {
+                    if(!auth || auth.authorized == false || auth.token !== token.token) {
+                        respondError();
+                    } else {
+                        socket.broadcast.emit('chat-message', {
+                            name: data.name,
+                            msg: data.msg,
+                        });
+                    }
+                }
+            }
+
+            db.getTokenByUsername(auth.userId, handleGetTokenFromDb);
         }
 
         function handleAuthorizeToken(data) {
@@ -199,12 +214,10 @@ if (cluster.isMaster) {
             }
 
             function handleGetTokenFromDb(err, token) {
-
                 if(err) {
                     socket.emit(data.failCallback);
                     console.log('Error getting token from database: ' + JSON.stringify(err, null, 2));
                 } else {
-                    console.log('Got token from db: ' + JSON.stringify(token, null, 2));
                     checkAuthorized(token);
                 }
             }
