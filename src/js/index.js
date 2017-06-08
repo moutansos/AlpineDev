@@ -173,10 +173,11 @@ var navChat = function() {
         mainView.setBaseComponent(chat);
 
         chat.setSendButtonListener(function() {
+            var auth = authToken.getItem();
             var msg = {
-                name: 'Test', 
+                name: auth.userId,
                 msg: chat.getInputText(), 
-                auth: authToken.getItem(),
+                auth: auth,
             }
             socket.emit('chat-message', msg);
             chat.addMessage(msg);
