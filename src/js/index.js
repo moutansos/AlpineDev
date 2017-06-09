@@ -94,10 +94,13 @@ var navLogin = function() {
         } else {
             prompt.showLoading();
 
-            function handlePasswordVerify(err, pass) {
+            function handleUserVerify(err, pass) {
                 if(err) {
                     prompt.hideLoading();
                     prompt.setResponseText(err);
+                } else if(pass.length < 10) {
+                    prompt.hideLoading();
+                    prompt.setResponseText('Password must be longer than 10 characters');
                 } else {
                     var data = {
                         username: prompt.getUsernameFromInput(),
@@ -111,7 +114,7 @@ var navLogin = function() {
             }
             //TODO: Frontend validation
 
-            prompt.getPasswordFromInput(handlePasswordVerify);
+            prompt.getPasswordFromInput(handleUserVerify);
         }
     });
 
