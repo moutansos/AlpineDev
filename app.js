@@ -35,13 +35,9 @@ if (cluster.isMaster) {
     const LoginToken = require('./lib/LoginToken.js');
     const AWSDyDB = require('./lib/db/AWSDyDB.js');
 
-    AWS.config.region = process.env.REGION
-
-    var sns = new AWS.SNS();
-
+    AWS.config.region = process.env.REGION;
     var env = process.env.NODE_ENV || 'dev';
 
-    var snsTopic = process.env.NEW_SIGNUP_TOPIC;
     var app = express();
 
     var db = new AWSDyDB(env);
@@ -65,11 +61,12 @@ if (cluster.isMaster) {
     if(env === 'dev') {
         io.adapter(redis({ host: 'localhost', port: 6379 }));
     } else {
-        io.adapter(redis({ host: process.env.REDIS_URL, port: REDIS_PORT }));
+        io.adapter(redis({ host: process.env.REDIS_URL, port: process.env.REDIS_PORT }));
     }
-    io.on('connection', function(socket){
+
+    io.on('connection', function(socket) {
         console.log('a user connected');
-        socket.on('disconnect', function(){
+        socket.on('disconnect', function() {
             console.log('user disconnected');
         });
 
