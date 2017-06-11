@@ -59,7 +59,7 @@ if (cluster.isMaster) {
     });
 
     if(env === 'dev') {
-        io.adapter(redis({ host: 'localhost', port: 6379 }));
+        io.adapter(redis({ host: process.env.REDIS_URL || 'localhost', port: process.env.REDIS_PORT || 6379 }));
     } else {
         io.adapter(redis({ host: process.env.REDIS_URL, port: process.env.REDIS_PORT }));
     }
